@@ -8,6 +8,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: tests
+      env:
+        KAMATERA_API_CLIENT_ID: ${{ secrets.KAMATERA_API_CLIENT_ID }}
+        KAMATERA_API_SECRET: ${{ secrets.KAMATERA_API_SECRET }}
       run: |
         docker build -f tests.Dockerfile -t tests . &&\
         docker run -e KAMATERA_API_CLIENT_ID -e KAMATERA_API_SECRET tests
