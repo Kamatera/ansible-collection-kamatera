@@ -9,5 +9,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: tests
       run: |
-        ls -lah
-
+        docker build -f tests.Dockerfile -t tests . &&\
+        docker run -e KAMATERA_API_CLIENT_ID -e KAMATERA_API_SECRET tests
