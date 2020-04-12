@@ -46,8 +46,12 @@ print(' -e datacenter=EU-LO -e image=%s -e cpu_type=%s -e cpu_cores=%s -e ram_mb
 " > tests/output/compute_args
 [ "$?" != "0" ] && echo failed to test compute options output && exit 1
 
-ansible-playbook tests/compute_playbook.yml -e output_dir=`pwd`/tests/output `cat tests/output/compute_args`
-[ "$?" != "0" ] && echo failed to run compute_playbook && exit 1
+if [ "${1}" != "" ]; then
+  ansible-playbook tests/compute_playbook.yml -e server_name=$1 -e output_dir=`pwd`/tests/output `cat tests/output/compute_args`
+  [ "$?" != "0" ] && echo failed to run compute_playbook && exit 1
+else
+  echo skipping compute_playbook
+fi
 
 echo Great Success
 exit 0

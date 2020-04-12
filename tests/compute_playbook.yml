@@ -1,7 +1,5 @@
 - name: Provisioning and operations example
   hosts: localhost
-  vars:
-    server_name: test_ansible
   tasks:
     - kamatera.kamatera.kamatera_compute:
         server_names: ['{{ server_name }}_1','{{ server_name }}_2']

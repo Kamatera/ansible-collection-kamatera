@@ -43,6 +43,7 @@ jobs:
         KAMATERA_API_CLIENT_ID: ${{ secrets.APICLIENTID }}
         KAMATERA_API_SECRET: ${{ secrets.APISECRET }}
         INSTALL_TYPE: ${{ matrix.install_type }}
+        OS: ${{ matrix.os }}
       run: |
         if [ "${INSTALL_TYPE}" == "package" ]; then
           sudo apt update && sudo apt install -y software-properties-common &&\
@@ -62,4 +63,8 @@ jobs:
           python3 -m pip install git+https://github.com/ansible/ansible.git@devel
         fi &&\
         ansible-galaxy collection install `ls build/kamatera-kamatera-*.tar.gz` &&\
-        bash tests/test_compute.sh
+        if [ "${OS}" == "ubuntu-18.04" ] && [ "${INSTALL_TYPE}" == "package" ]; then
+          tests/test_compute.sh test_ansible
+        else
+          tests/test_compute.sh
+        fi
