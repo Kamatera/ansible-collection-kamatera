@@ -48,12 +48,16 @@ jobs:
           sudo apt-add-repository --yes --update ppa:ansible/ansible &&\
           sudo apt install -y ansible
         elif [ "${INSTALL_TYPE}" == "pip2" ]; then
+          python2 -m pip install --upgrade pip setuptools wheel &&\
           python2 -m pip install ansible
         elif [ "${INSTALL_TYPE}" == "pip3" ]; then
+          sudo apt-get install -y python3-setuptools &&\
           python3 -m pip install ansible
         elif [ "${INSTALL_TYPE}" == "pip2-dev" ]; then
-          python3 -m pip install git+https://github.com/ansible/ansible.git@devel
+          python2 -m pip install --upgrade pip setuptools wheel &&\
+          python2 -m pip install git+https://github.com/ansible/ansible.git@devel
         elif [ "${INSTALL_TYPE}" == "pip3-dev" ]; then
+          sudo apt-get install -y python3-setuptools &&\
           python3 -m pip install git+https://github.com/ansible/ansible.git@devel
         fi &&\
         ansible-galaxy collection install build/output/kamatera-kamatera-*.tar.gz &&\
