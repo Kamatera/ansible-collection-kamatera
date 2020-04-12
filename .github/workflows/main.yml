@@ -1,16 +1,58 @@
 name: CI
 on:
   push:
-    branches: [ master ]
+  pull_request:
+  release:
+    types: [published]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
-    - name: tests
-      env:
+    - run: |
+        python3 -m pip install ansible &&\
+        if [ "${GITHUB_EVENT_NAME}" == "release" ]; then
+          VERSION="${GITHUB_REF}"
+        else
+          VERSION=0.0.0
+        fi &&\
+        TEMPDIR=`mktemp -d` &&\
+        cp -r plugins LICENSE README.md $TEMPDIR/ &&\
+        sed "s/0.0.0/${VERSION}/" galaxy.yml > $TEMPDIR/galaxy.yml &&\
+        ansible-galaxy collection build --output-path output $TEMPDIR &&\
+        rm -rf $TEMPDIR &&\
+        tar -tzvf output/kamatera-kamatera-$VERSION.tar.gz
+    - uses: actions/upload-artifact@v1
+      with:
+        name: build
+        path: output
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-18.04]
+        install_type: [package, pip2, pip3, pip2-dev, pip3-dev]
+    steps:
+    - uses: actions/download-artifact@v1
+      with:
+        name: build
+    - env:
         KAMATERA_API_CLIENT_ID: ${{ secrets.KAMATERA_API_CLIENT_ID }}
         KAMATERA_API_SECRET: ${{ secrets.KAMATERA_API_SECRET }}
+        INSTALL_TYPE: ${{ matrix.install_type }}
       run: |
-        docker build -f tests.Dockerfile -t tests . &&\
-        docker run -e KAMATERA_API_CLIENT_ID -e KAMATERA_API_SECRET tests
+        if [ "${INSTALL_TYPE}" == "package" ]; then
+          sudo apt update && sudo apt install -y software-properties-common &&\
+          sudo apt-add-repository --yes --update ppa:ansible/ansible &&\
+          sudo apt install -y ansible
+        elif [ "${INSTALL_TYPE}" == "pip2" ]; then
+          python2 -m pip install ansible
+        elif [ "${INSTALL_TYPE}" == "pip3" ]; then
+          python3 -m pip install ansible
+        elif [ "${INSTALL_TYPE}" == "pip2-dev" ]; then
+          python3 -m pip install git+https://github.com/ansible/ansible.git@devel
+        elif [ "${INSTALL_TYPE}" == "pip3-dev" ]; then
+          python3 -m pip install git+https://github.com/ansible/ansible.git@devel
+        fi &&\
+        ansible-galaxy collection install build/output/kamatera-kamatera-*.tar.gz &&\
+        tests/test_compute.sh

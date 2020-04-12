@@ -1,6 +1,6 @@
 namespace: kamatera
 name: kamatera
-version: 0.0.1
+version: 0.0.0
 readme: README.md
 authors:
   - Ori Hoch
@@ -11,7 +11,7 @@ license_file: LICENSE
 tags:
   - cloud
   - compute
-repository: https://www.github.com/OriHoch/ansible-collection-kamatera
-documentation: https://github.com/cloudwm/cwmtoolbox/blob/master/README.md
-homepage: https://www.github.com/OriHoch/ansible-collection-kamatera
-issues: https://www.github.com/OriHoch/ansible-collection-kamatera/issues
+repository: https://www.github.com/cloudwm/ansible
+documentation: https://github.com/cloudwm/ansible/blob/master/README.md
+homepage: https://www.github.com/cloudwm/ansible
+issues: https://www.github.com/cloudwm/ansible/issues
