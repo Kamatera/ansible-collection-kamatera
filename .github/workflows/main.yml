@@ -60,5 +60,5 @@ jobs:
           sudo apt-get install -y python3-setuptools python3-wheel &&\
           python3 -m pip install git+https://github.com/ansible/ansible.git@devel
         fi &&\
-        ansible-galaxy collection install `ls build/output/kamatera-kamatera-*.tar.gz` &&\
+        ansible-galaxy collection install `ls build/kamatera-kamatera-*.tar.gz` &&\
         tests/test_compute.sh
