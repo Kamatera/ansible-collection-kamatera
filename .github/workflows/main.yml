@@ -35,6 +35,7 @@ jobs:
         os: [ubuntu-16.04, ubuntu-18.04]
         install_type: [package, pip2, pip3, pip2-dev, pip3-dev]
     steps:
+    - uses: actions/checkout@v2
     - uses: actions/download-artifact@v1
       with:
         name: build
