@@ -1,7 +1,6 @@
 name: CI
 on:
   push:
-  pull_request:
   release:
     types: [published]
 jobs:
@@ -40,8 +39,8 @@ jobs:
       with:
         name: build
     - env:
-        KAMATERA_API_CLIENT_ID: ${{ secrets.APICLIENTID }}
-        KAMATERA_API_SECRET: ${{ secrets.APISECRET }}
+        KAMATERA_API_CLIENT_ID: ${{ secrets.KAMATERA_API_CLIENT_ID }}
+        KAMATERA_API_SECRET: ${{ secrets.KAMATERA_API_SECRET }}
         INSTALL_TYPE: ${{ matrix.install_type }}
         OS: ${{ matrix.os }}
       run: |
