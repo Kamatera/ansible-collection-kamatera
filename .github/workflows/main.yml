@@ -7,9 +7,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: |
-        cat $GITHUB_EVENT_PATH | jq &&\
+        cat $GITHUB_EVENT_PATH | jq . &&\
         echo $GITHUB_REF &&\
         echo $GITHUB_SHA &&\
+        exit 1
         sudo apt-get install -y python3-setuptools &&\
         python3 -m pip install ansible &&\
         VERSION=0.0.0 &&\
