@@ -7,10 +7,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: |
-        sudo apt-get install -y python3-setuptools &&\
-        python3 -m pip install ansible &&\
+        cat $GITHUB_EVENT_PATH | jq &&\
         echo $GITHUB_REF &&\
         echo $GITHUB_SHA &&\
+        sudo apt-get install -y python3-setuptools &&\
+        python3 -m pip install ansible &&\
         VERSION=0.0.0 &&\
         TEMPDIR=`mktemp -d` &&\
         cp -r plugins LICENSE README.md $TEMPDIR/ &&\
