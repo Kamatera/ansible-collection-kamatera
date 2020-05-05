@@ -7,13 +7,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: |
-        cat $GITHUB_EVENT_PATH | jq . &&\
-        echo $GITHUB_REF &&\
-        echo $GITHUB_SHA &&\
-        exit 1
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          VERSION="$(echo $GITHUB_REF | sed -e 's:refs/tags/::')"
+        else
+          VERSION=0.0.0
+        fi &&\
+        echo VERSION=$VERSION &&\
         sudo apt-get install -y python3-setuptools &&\
         python3 -m pip install ansible &&\
-        VERSION=0.0.0 &&\
         TEMPDIR=`mktemp -d` &&\
         cp -r plugins LICENSE README.md $TEMPDIR/ &&\
         sed "s/0.0.0/${VERSION}/" galaxy.yml > $TEMPDIR/galaxy.yml &&\
@@ -42,6 +43,7 @@ jobs:
         INSTALL_TYPE: ${{ matrix.install_type }}
         OS: ${{ matrix.os }}
       run: |
+        exit 0
         if [ "${INSTALL_TYPE}" == "package" ]; then
           sudo apt update && sudo apt install -y software-properties-common &&\
           sudo apt-add-repository --yes --update ppa:ansible/ansible &&\
@@ -64,4 +66,32 @@ jobs:
           tests/test_compute.sh test_ansible
         else
           tests/test_compute.sh
+        fi
+  publish:
+    runs-on: ubuntu-18.04
+    needs: tests
+    steps:
+    - uses: actions/download-artifact@v1
+      with:
+        name: build
+    - env:
+        KAMATERA_MACHINE_USER_TOKEN: ${{ secrets.KAMATERA_MACHINE_USER_TOKEN }}
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          echo GITHUB_REF=$GITHUB_REF &&\
+          VERSION="$(echo $GITHUB_REF | sed -e 's:refs/tags/::')" &&\
+          echo VERSION=$VERSION &&\
+          FILE="build/kamatera-kamatera-${VERSION}.tar.gz" &&\
+          echo FILE=$FILE &&\
+          RELEASE_ID="$(curl -sL https://api.github.com/repos/Kamatera/ansible-collection-kamatera/releases/tags/${VERSION} | jq -r .id)" &&\
+          echo RELEASE_ID=$RELEASE_ID &&\
+          if [ "$(curl -H "Authorization: token $KAMATERA_MACHINE_USER_TOKEN" \
+                       -H "Content-Type: $(file -b --mime-type $FILE)" \
+                       --data-binary @$FILE \
+                       "https://uploads.github.com/repos/Kamatera/ansible-collection-kamatera/releases/${RELEASE_ID}/assets?name=$(basename $FILE)" | tee /dev/stderr | jq -r .state)" == "uploaded" ]; then
+            echo Release asset uploaded successfuly
+          else
+            echo Failed to upload release asset
+            exit 1
+          fi
         fi
