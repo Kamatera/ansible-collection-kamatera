@@ -1,8 +1,6 @@
 name: CI
 on:
   push:
-  release:
-    types: [published]
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -11,11 +9,9 @@ jobs:
     - run: |
         sudo apt-get install -y python3-setuptools &&\
         python3 -m pip install ansible &&\
-        if [ "${GITHUB_EVENT_NAME}" == "release" ]; then
-          VERSION="${GITHUB_REF}"
-        else
-          VERSION=0.0.0
-        fi &&\
+        echo $GITHUB_REF &&\
+        echo $GITHUB_SHA &&\
+        VERSION=0.0.0 &&\
         TEMPDIR=`mktemp -d` &&\
         cp -r plugins LICENSE README.md $TEMPDIR/ &&\
         sed "s/0.0.0/${VERSION}/" galaxy.yml > $TEMPDIR/galaxy.yml &&\
