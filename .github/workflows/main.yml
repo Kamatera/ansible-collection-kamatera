@@ -43,7 +43,6 @@ jobs:
         INSTALL_TYPE: ${{ matrix.install_type }}
         OS: ${{ matrix.os }}
       run: |
-        exit 0
         if [ "${INSTALL_TYPE}" == "package" ]; then
           sudo apt update && sudo apt install -y software-properties-common &&\
           sudo apt-add-repository --yes --update ppa:ansible/ansible &&\
