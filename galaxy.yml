@@ -7,7 +7,6 @@ authors:
 description: |
   Management of Kamatera cloud infrastructure
 license: MIT
-license_file: LICENSE
 tags:
   - cloud
   - compute
