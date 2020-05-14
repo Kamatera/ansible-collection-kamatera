@@ -75,13 +75,17 @@ jobs:
         name: build
     - env:
         KAMATERA_MACHINE_USER_TOKEN: ${{ secrets.KAMATERA_MACHINE_USER_TOKEN }}
+        GALAXY_SERVER_API_KEY: ${{ secrets.GALAXY_SERVER_API_KEY }}
       run: |
         if [[ $GITHUB_REF == refs/tags/* ]]; then
+          sudo apt-get install -y python3-setuptools &&\
+          python3 -m pip install ansible &&\
           echo GITHUB_REF=$GITHUB_REF &&\
           VERSION="$(echo $GITHUB_REF | sed -e 's:refs/tags/::')" &&\
           echo VERSION=$VERSION &&\
           FILE="build/kamatera-kamatera-${VERSION}.tar.gz" &&\
           echo FILE=$FILE &&\
+          ansible-galaxy collection publish --api-key $GALAXY_SERVER_API_KEY $FILE &&\
           RELEASE_ID="$(curl -sL https://api.github.com/repos/Kamatera/ansible-collection-kamatera/releases/tags/${VERSION} | jq -r .id)" &&\
           echo RELEASE_ID=$RELEASE_ID &&\
           if [ "$(curl -H "Authorization: token $KAMATERA_MACHINE_USER_TOKEN" \

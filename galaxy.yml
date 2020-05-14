@@ -10,7 +10,7 @@ license: MIT
 tags:
   - cloud
   - compute
-repository: https://www.github.com/cloudwm/ansible
-documentation: https://github.com/cloudwm/ansible/blob/master/README.md
-homepage: https://www.github.com/cloudwm/ansible
-issues: https://www.github.com/cloudwm/ansible/issues
+repository: https://www.github.com/Kamatera/ansible-collection-kamatera
+documentation: https://github.com/Kamatera/ansible-collection-kamatera/blob/master/README.md
+homepage: https://www.kamatera.com/express/compute/
+issues: https://www.github.com/Kamatera/ansible-collection-kamatera/issues
