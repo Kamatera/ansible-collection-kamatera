@@ -2,6 +2,12 @@
 
 Ansible collection for management of Kamatera cloud compute resources
 
+## Installation
+
+* Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/index.html) version 2.9 or higher
+* Install the Kamatera Ansible collection:
+  * `ansible-galaxy collection install kamatera.kamatera`
+
 ## Getting Kamatera API keys
 
 You can get the keys from the Kamatera Console under API > Keys
